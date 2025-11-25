@@ -81,7 +81,13 @@ dotnet sln list
 dotnet sln remove <path.csproj>
 ```
 
-10. Restore packages
+10. Add project reference to another project dependencies
+
+```bash
+dotnet add src/ConsoleApp/ConsoleApp.csproj reference src/ClassLib/ClassLib.csproj
+```
+
+11. Restore packages
 
 ```bash
 dotnet restore
@@ -89,26 +95,26 @@ dotnet restore
 
 \* Restores NuGet packages and project-to-project references required by the project or solution.
 
-11. Build all projects within the solution
+12. Build all projects within the solution
 
 ```bash
 dotnet build
 ```
 
-12. Run project
+13. Run project
 
 ```bash
 dotnet run --project src/ConsoleApp/ConsoleApp.csproj
 ```
 
-13. SDK installs an ASP.NET Core HTTPS development certificate.
+14. SDK installs an ASP.NET Core HTTPS development certificate.
     To trust the certificate, run
 
 ```
 dotnet dev-certs https --trust
 ```
 
-14. Publish project
+15. Publish project
 
 Common options:
 
