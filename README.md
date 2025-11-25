@@ -15,25 +15,37 @@
 
 ## Quick commands
 
-1. Create a solution
+0. Dotnet help command
 
 ```bash
-dotnet new sln -n SolutionName
+dotnet --help
 ```
 
-2. Create a Console project
+1. Create a dotnet gitignore file
+
+```bash
+dotnet new gitignore
+```
+
+2. Create a solution
+
+```bash
+dotnet new sln -o src -n SolutionName
+```
+
+3. Create a Console project
 
 ```bash
 dotnet new console -o src/ConsoleApp -n ConsoleApp
 ```
 
-3. Create a Class library project
+4. Create a Class library project
 
 ```bash
 dotnet new classlib -o src/ClassLib -n ClassLib
 ```
 
-4. Create an API project
+5. Create an API project
 
 ```bash
 # ASP.NET Core Web API template
@@ -45,31 +57,31 @@ dotnet new webapi -o src/WebApi -n WebApi
 dotnet new webapiaot -o src/WebApi -n WebApi
 ```
 
-5. Add project to solution
+6. Add project to solution
 
 ```bash
 dotnet sln SolutionName.sln add src/ConsoleApp/ConsoleApp.csproj
 ```
 
-6. Add multiple projects to solution
+7. Add multiple projects to solution
 
 ```bash
 dotnet sln SolutionName.sln add src/\*_/_.csproj
 ```
 
-7. List solution projects
+8. List solution projects
 
 ```bash
 dotnet sln list
 ```
 
-8. Remove project from solution
+9. Remove project from solution
 
 ```bash
 dotnet sln remove <path.csproj>
 ```
 
-9. Restore packages
+10. Restore packages
 
 ```bash
 dotnet restore
@@ -77,19 +89,26 @@ dotnet restore
 
 \* Restores NuGet packages and project-to-project references required by the project or solution.
 
-10. Build all projects within the solution
+11. Build all projects within the solution
 
 ```bash
 dotnet build
 ```
 
-11. Run project
+12. Run project
 
 ```bash
 dotnet run --project src/ConsoleApp/ConsoleApp.csproj
 ```
 
-12. Publish project
+13. SDK installs an ASP.NET Core HTTPS development certificate.
+    To trust the certificate, run
+
+```
+dotnet dev-certs https --trust
+```
+
+14. Publish project
 
 Common options:
 
