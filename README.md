@@ -60,7 +60,11 @@ dotnet new webapiaot -o src/WebApi -n WebApi
 6. Add project to solution
 
 ```bash
-dotnet sln SolutionName.sln add src/ConsoleApp/ConsoleApp.csproj
+# .sln is the older format for solution files
+dotnet sln SolutionName.sln add src/ConsoleApp/ConsoleApp.csproj 
+
+# .slnx is the new accepted format for solution files in net10
+dotnet sln src/App.slnx add src/API/API.csproj
 ```
 
 7. Add multiple projects to solution
