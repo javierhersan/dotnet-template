@@ -1,0 +1,10 @@
+{
+	"servers": {
+		"todos": {
+			"url": "http://localhost:5000/mcp",
+			"type": "http",
+			// "headers": {"Mcp-Session-Id": "a0e6f3d4-7a82-424d-bdaa-59072826e80f"}
+		}
+	},
+	"inputs": [],
+}

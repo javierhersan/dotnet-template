@@ -97,6 +97,12 @@ dotnet sln remove <path.csproj>
 dotnet add src/ConsoleApp/ConsoleApp.csproj reference src/ClassLib/ClassLib.csproj
 ```
 
+11. Install a nuget package into a project
+
+```bash
+dotnet add src/API/API.csproj package PackageName
+```
+
 11. Restore packages
 
 ```bash
