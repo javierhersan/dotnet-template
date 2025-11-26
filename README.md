@@ -174,3 +174,10 @@ Add to .csproj file the following property
 - Conditionally loading libraries at runtime.
 - Generating code on the fly to implement functionality.
 - Libraries using these dynamic features need to be updated in order to work with Native AOT. They can be updated using tools like Roslyn source generators. Library authors hoping to support Native AOT are encouraged to: Read about Native AOT compatibility requirements and prepare the library for trimming.
+
+## Git
+
+```bash
+git config --global user.email # Check your user
+git config --global user.email user@email.com # Config your user
+```
