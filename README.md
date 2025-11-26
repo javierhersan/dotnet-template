@@ -39,6 +39,12 @@ dotnet new sln -o src -n SolutionName
 dotnet new console -o src/ConsoleApp -n ConsoleApp
 ```
 
+\* To search for existing templates use the search option.
+
+```bash
+dotnet new search webapi --language "C#" --author "Microsoft"
+```
+
 4. Create a Class library project
 
 ```bash
