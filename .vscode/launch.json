@@ -8,7 +8,7 @@
             "name": ".NET Core Launch (web)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "dotnet: build",
+            "preLaunchTask": "dotnet: build and trust cert",
             "program": "${workspaceFolder}/src/API/bin/Debug/net10.0/API.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
@@ -18,8 +18,8 @@
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development",
-                // "ASPNETCORE_URLS": "https://localhost:8443;http://localhost:8080"
+                "ASPNETCORE_ENVIRONMENT": "Local",
+                "ASPNETCORE_URLS": "https://localhost:8443;http://localhost:8080"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/src/API/Views"

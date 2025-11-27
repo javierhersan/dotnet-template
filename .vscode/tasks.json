@@ -2,6 +2,20 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "dotnet: build and trust cert",
+			"dependsOn": [
+				"dotnet: build",
+				"dotnet: trust dev cert"
+			],
+			"dependsOrder": "sequence"
+		},
+		{
+            "label": "dotnet: trust dev cert",
+            "type": "shell",
+            "command": "dotnet dev-certs https --trust",
+            "problemMatcher": []
+        },
+		{
 			"type": "dotnet",
 			"task": "build",
 			"group": "build",

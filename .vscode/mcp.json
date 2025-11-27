@@ -1,9 +1,11 @@
 {
 	"servers": {
 		"todos": {
-			"url": "http://localhost:5000/mcp",
+			"url": "https://localhost:8443/mcp",
 			"type": "http",
-			// "headers": {"Mcp-Session-Id": "a0e6f3d4-7a82-424d-bdaa-59072826e80f"}
+			// Works locally with MCP Inspector, to run MCP Inspector execute these commands "$env:NODE_TLS_REJECT_UNAUTHORIZED=0", "npx @modelcontextprotocol/inspector".
+			// Fails locally with VSCode due to the Self Signed Certificate. GitHub Issue: https://github.com/microsoft/vscode/issues/248170
+			// Works when deploying it to the cloud with a valid certificate.			
 		}
 	},
 	"inputs": [],
