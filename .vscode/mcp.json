@@ -3,9 +3,16 @@
 		"todos": {
 			"url": "https://localhost:8443/mcp",
 			"type": "http",
+			
 			// Works locally with MCP Inspector, to run MCP Inspector execute these commands "$env:NODE_TLS_REJECT_UNAUTHORIZED=0", "npx @modelcontextprotocol/inspector".
-			// Fails locally with VSCode due to the Self Signed Certificate. GitHub Issue: https://github.com/microsoft/vscode/issues/248170
+			
 			// Works when deploying it to the cloud with a valid certificate.			
+			
+			// Fails locally with VSCode since Self-Signed Certificate are mpt trusted by VSCode. GitHub Issue: https://github.com/microsoft/vscode/issues/248170
+			// Workaround: Launch VSCode from the terminal after setting the environment variable "NODE_TLS_REJECT_UNAUTHORIZED" to "0".
+			// C:\\Projects\dotnet-template> $env:NODE_TLS_REJECT_UNAUTHORIZED=0
+			// C:\\Projects\dotnet-template> code .
+			// Add also "http.systemCertificatesNode": true to ".vscode/settings.json" file.
 		}
 	},
 	"inputs": [],
