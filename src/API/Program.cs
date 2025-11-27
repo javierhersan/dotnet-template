@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
 /*
 Using directive is unnecessary.IDE0005
@@ -8,10 +9,7 @@ namespace Microsoft.AspNetCore
 // var builder = WebApplication.CreateSlimBuilder(args);
 var builder = WebApplication.CreateBuilder(args);
 
-// builder.Services.ConfigureHttpJsonOptions(options =>
-// {
-    
-// });
+builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("MyConfig"));
 
 builder.Services.AddControllers();
 
@@ -22,7 +20,7 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin()
               .AllowAnyMethod()
               .AllowAnyHeader()
-              .WithExposedHeaders("Mcp-Session-Id");
+              .WithExposedHeaders(["Mcp-Session-Id"]);
     });
 });
 
@@ -40,10 +38,10 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthorization();
 app.MapControllers();
 app.MapMcp("/mcp");
+// app.UseHttpsRedirection();
 
 app.Run();
