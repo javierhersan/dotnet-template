@@ -42,6 +42,6 @@ app.UseCors();
 app.UseAuthorization();
 app.MapControllers();
 app.MapMcp("/mcp");
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.Run();
