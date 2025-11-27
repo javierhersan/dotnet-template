@@ -187,6 +187,23 @@ Add to .csproj file the following property
 - Generating code on the fly to implement functionality.
 - Libraries using these dynamic features need to be updated in order to work with Native AOT. They can be updated using tools like Roslyn source generators. Library authors hoping to support Native AOT are encouraged to: Read about Native AOT compatibility requirements and prepare the library for trimming.
 
+## MCP
+
+1. Run https MCP project
+
+2. Run MCP Inspector
+
+```bash
+$env:NODE_TLS_REJECT_UNAUTHORIZED=0
+npx @modelcontextprotocol/inspector
+```
+
+3. Connect to MCP server through MCP Inspector
+```bash
+Streamable HTTP: https://localhost:8433/mcp
+```
+
+
 ## Git
 
 ```bash
