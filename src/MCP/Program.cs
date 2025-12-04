@@ -13,15 +13,9 @@ builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection
 
 builder.Services.AddControllers();
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
+builder.Services.AddMcpServer()
+    .WithHttpTransport()
+    .WithToolsFromAssembly();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -36,6 +30,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 app.UseAuthorization();
 app.MapControllers();
+app.MapMcp("/mcp");
 app.UseHttpsRedirection();
 
 app.Run();

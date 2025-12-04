@@ -1,4 +1,4 @@
-@API_HostAddress = https://localhost:8443/api
+@API_HostAddress = http://localhost:5222
 
 GET {{API_HostAddress}}/todos/
 Accept: application/json
