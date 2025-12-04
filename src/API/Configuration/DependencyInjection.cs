@@ -13,9 +13,31 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddSingleton<ITodosService, TodosService>();
+        return services;
+    }
+
+    public static IServiceCollection ConfigureCors(this IServiceCollection services)
+    {
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+
+        return services;
+    }  
+
+    public static IServiceCollection ConfigureOpenApi(this IServiceCollection services)
+    {
+        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+        services.AddOpenApi();
         return services;
     }
 }
