@@ -2,6 +2,8 @@ using Application.Repositories;
 using Application.Services;
 using Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
 
 namespace API.Configuration;
 
@@ -9,7 +11,15 @@ public static class DependencyInjection
 {
     public static IServiceCollection ConfigureSettings(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<ApplicationSettings>(configuration.GetSection("MyConfig"));
+        services.Configure<ApplicationSettings>(configuration.GetSection("ApplicationSettings"));
+        return services;
+    }
+
+    public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddMicrosoftIdentityWebApi(configuration.GetSection("ApplicationSettings:AzureAd"));
+
         return services;
     }
     
