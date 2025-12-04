@@ -13,8 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("MyConfig"));
 
-builder.Services.AddInfrastructure();
-builder.Services.AddSingleton<ITodosService, TodosService>();
+// builder.Services.AddInfrastructure();
+// builder.Services.AddSingleton<ITodosService, TodosService>();
 
 builder.Services.AddControllers();
 

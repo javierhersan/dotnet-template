@@ -1,7 +1,7 @@
 using Application.Services;
 using Microsoft.AspNetCore;
 using static Microsoft.AspNetCore.Http.StatusCodes;
-using Infrastructure;
+using API.Configuration;
 
 /*
 Using directive is unnecessary.IDE0005
@@ -13,8 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("MyConfig"));
 
-builder.Services.AddInfrastructure();
-builder.Services.AddSingleton<ITodosService, TodosService>();
+builder.Services
+    .AddInfrastructure()
+    .AddApplicationServices();
 
 builder.Services.AddControllers();
 
