@@ -1,3 +1,4 @@
+using Application.Services;
 using Microsoft.AspNetCore;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
@@ -10,6 +11,8 @@ namespace Microsoft.AspNetCore
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("MyConfig"));
+
+builder.Services.AddSingleton<ITodosService, TodosService>();
 
 builder.Services.AddControllers();
 
