@@ -11,15 +11,14 @@ namespace Microsoft.AspNetCore
 // var builder = WebApplication.CreateSlimBuilder(args);
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("MyConfig"));
-
 builder.Services
+    .ConfigureSettings(builder.Configuration)
     .AddInfrastructure()
     .AddApplication()
     .ConfigureCors()
     .ConfigureOpenApi();
 
-builder.Services.AddControllers();
+// builder.Services.AddControllers();
 
 builder.Services.AddMcpServer()
     .WithHttpTransport()
@@ -33,8 +32,8 @@ if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local
 }
 
 app.UseCors();
-app.UseAuthorization();
-app.MapControllers();
+// app.UseAuthorization();
+// app.MapControllers();
 app.MapMcp("/mcp");
 app.UseHttpsRedirection();
 

@@ -19,5 +19,29 @@
     <!-- Reference to API project to import API configuration methods -->
     <ProjectReference Include="..\API\API.csproj" />
   </ItemGroup>
+
+  <!-- Reference to API appsettings -->
+  <ItemGroup>
+    <Content Include="..\API\appsettings.json">
+      <Link>appsettings.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\API\appsettings.Local.json">
+      <Link>appsettings.Local.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\API\appsettings.Dev.json">
+      <Link>appsettings.Dev.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\API\appsettings.Uat.json">
+      <Link>appsettings.Uat.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\API\appsettings.Prod.json">
+      <Link>appsettings.Prod.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   
 </Project>

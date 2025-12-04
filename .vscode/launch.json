@@ -35,11 +35,6 @@
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
-                "uriFormat": "%s/scalar/v1"
-            },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Local",
                 "ASPNETCORE_URLS": "https://localhost:9443;http://localhost:9080"

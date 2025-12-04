@@ -21,6 +21,16 @@
 			"group": "build",
 			"problemMatcher": [],
 			"label": "dotnet: build"
+		},
+		{
+			"label": "mcp inspector",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-Command",
+				"$env:NODE_TLS_REJECT_UNAUTHORIZED=0; npx @modelcontextprotocol/inspector"
+			],
+			"problemMatcher": []
 		}
 	]
 }

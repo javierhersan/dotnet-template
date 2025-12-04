@@ -12,9 +12,8 @@ namespace Microsoft.AspNetCore
 // var builder = WebApplication.CreateSlimBuilder(args);
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("MyConfig"));
-
 builder.Services
+    .ConfigureSettings(builder.Configuration)
     .AddInfrastructure()
     .AddApplication()
     .ConfigureCors()

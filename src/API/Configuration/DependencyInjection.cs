@@ -7,6 +7,12 @@ namespace API.Configuration;
 
 public static class DependencyInjection
 {
+    public static IServiceCollection ConfigureSettings(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<ApplicationSettings>(configuration.GetSection("MyConfig"));
+        return services;
+    }
+    
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddSingleton<ITodosRepository, TodosRepository>();
