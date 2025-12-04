@@ -1,7 +1,7 @@
 using Application.Services;
 using Microsoft.AspNetCore;
 using static Microsoft.AspNetCore.Http.StatusCodes;
-using Infrastructure;
+using API.Configuration;
 
 /*
 Using directive is unnecessary.IDE0005
@@ -13,8 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("MyConfig"));
 
-// builder.Services.AddInfrastructure();
-// builder.Services.AddSingleton<ITodosService, TodosService>();
+builder.Services
+    .AddInfrastructure()
+    .AddApplication()
+    .ConfigureCors()
+    .ConfigureOpenApi();
 
 builder.Services.AddControllers();
 
@@ -22,12 +25,9 @@ builder.Services.AddMcpServer()
     .WithHttpTransport()
     .WithToolsFromAssembly();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
 {
     app.MapOpenApi();
 }
