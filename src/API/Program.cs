@@ -1,6 +1,7 @@
 using Application.Services;
 using Microsoft.AspNetCore;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using Scalar.AspNetCore;
 using API.Configuration;
 
 /*
@@ -34,9 +35,10 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseCors();
