@@ -24,6 +24,12 @@
 
 > For more information on clean architecture revisit "*docs/clean-architecture.md*" file
 
+The advantages of integrating the MCP layer within the same dotnet project as the conventional API has a major advantage: 
+
+- Application Services are reused, compiled, and bundled into the MCP server artifacts, reducing resource consumption by avoiding network overhead and extra bandwidth from API calls since application services also run within the MCP server. While this increases the bundle size, the impact on backend applications is not specially important.
+
+Moreover, MCP can be configured as well in the same layer as the HTTPS API. This way you can deploy them together saving resources depending on your VPS and Cloud configuration. However, the recommended approach based on "modelcontextprotocol/csharp-sdk" best practices is to separate these APIs into different layers, if you manage accordingly your cloud configuration no extra costs should be incurred.
+
 ## Instructions
 
 0. Set your preferred ASPNETCORE environment.
