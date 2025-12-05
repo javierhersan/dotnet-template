@@ -12,6 +12,13 @@ public static class DependencyInjection
     public static IServiceCollection ConfigureSettings(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<ApplicationSettings>(configuration.GetSection("ApplicationSettings"));
+        
+        ApplicationSettings applicationSettings = configuration
+            .GetSection("ApplicationSettings")
+            .Get<ApplicationSettings>() ?? new ApplicationSettings();
+
+        services.AddSingleton(applicationSettings);
+
         return services;
     }
 

@@ -3,6 +3,8 @@ namespace API.Configuration;
 public class ApplicationSettings
 {
     public AzureAd AzureAd { get; set; } = new AzureAd();
+    public string ServerUrl { get; set; } = string.Empty;
+    public string McpServerUrl { get; set; } = string.Empty;
     public string DatabaseSecretArn { get; set; } = string.Empty;
 }
 
