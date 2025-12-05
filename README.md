@@ -1,8 +1,6 @@
 # dotnet-template
 
-**dotnet-template** is an ASP.NET CORE C# template for building traditional HTTPS APIs and MCP (Model Context Protocol) APIs. It follows Clean Architecture and Clean Code best practices by using IoC, DI, and more... 
-
-> Built-in authorization workflow with OAuth JWT tokens or/and MS Entra ID.
+**dotnet-template** is an ASP.NET CORE C# template for building traditional HTTPS APIs and MCP (Model Context Protocol) APIs. It follows Clean Architecture and Clean Code best practices by using IoC, DI, and more... Built-in authorization workflow with OAuth JWT tokens or/and MS Entra ID.
 
 ## Prerequisites:
 
