@@ -129,3 +129,15 @@ You can debug both HTTPS and MCP APIs using VSCode and Visual Studio 2022 or gre
 To connect your GitHub Copilot Agent to your MCP tools, please specify the MCP server configuration and its URL within "*.vscode/mcp.json*" file.
 
 \* Take into account the MCP URL, the MCP underlying protocol (HTTP, SSE, Stdio), authorization and any additional header your may use.
+
+```json
+{
+	"servers": {
+		"todos": {
+			"url": "https://localhost:9443/mcp",
+			"type": "http",
+		}
+	},
+	"inputs": [],
+}
+```
