@@ -11,6 +11,7 @@ using Application.Configuration;
 using API.Controllers;
 using Microsoft.Extensions.Options;
 using System.Text.Encodings.Web;
+using AuthenticationService = Application.Services.AuthenticationService;
 
 namespace API.Configuration;
 
@@ -180,13 +181,14 @@ public static class DependencyInjection
     
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
+        services.AddSingleton<IAuthenticationRepository, AuthenticationRepository>();
         services.AddSingleton<ITodosRepository, TodosRepository>();
         return services;
     }
 
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddSingleton<AuthService>();
+        services.AddSingleton<IAuthenticationService, AuthenticationService>();
         services.AddSingleton<ITodosService, TodosService>();
         return services;
     }
