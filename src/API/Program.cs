@@ -23,17 +23,14 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 builder.Configuration.AddConfiguration(configuration);
+builder.Services.ConfigureSettings(builder.Configuration);
+builder.Services.ConfigureAuthentication(builder.Configuration);
 
-builder.Services
-    .ConfigureSettings(builder.Configuration)
-    .ConfigureAuthentication(builder.Configuration)
-    .AddInfrastructure()
+builder.Services.AddInfrastructure()
     .AddApplication()
     .ConfigureCors()
-    .ConfigureOpenApi();
-
-builder.Services.AddControllers();
-
+    .ConfigureOpenApi()
+    .AddControllers();
 
 var app = builder.Build();
 

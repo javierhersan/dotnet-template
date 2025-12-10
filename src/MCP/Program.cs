@@ -6,6 +6,8 @@ using ModelContextProtocol.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
+using Application.Configuration;
+using Microsoft.AspNetCore.Authentication;
 
 /*
 Using directive is unnecessary.IDE0005
@@ -26,78 +28,36 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 builder.Configuration.AddConfiguration(configuration);
+builder.Services.ConfigureSettings(builder.Configuration);
+
+ApplicationSettings applicationSettings = builder.Configuration.GetSection("ApplicationSettings").Get<ApplicationSettings>() ?? new ApplicationSettings();
+AuthenticationSettings authenticationSettings = builder.Configuration.GetSection("AuthenticationSettings").Get<AuthenticationSettings>() ?? new AuthenticationSettings();
+
+// MCP Authentication and Authorization
+// "Authorization": "Bearer eyJ0..."
+AuthenticationOptions authenticationOptions = new AuthenticationOptions
+{
+    DefaultAuthenticateScheme = McpAuthenticationDefaults.AuthenticationScheme,
+    DefaultChallengeScheme = McpAuthenticationDefaults.AuthenticationScheme
+};
+builder.Services.ConfigureAuthentication(builder.Configuration, authenticationOptions)
+    .AddMcp(options =>
+    {
+        options.ResourceMetadata = new()
+        {
+            Resource = new Uri(applicationSettings.McpServerUrl),
+            ResourceDocumentation = new Uri($"{applicationSettings.McpServerUrl}/mcp"),
+            AuthorizationServers = { new Uri($"{authenticationSettings.AzureAd.Instance}{authenticationSettings.AzureAd.TenantId}/v2.0") },
+            ScopesSupported = ["mcp:tools"],
+        };
+    });
 
 builder.Services
-    .ConfigureSettings(builder.Configuration)
     .AddInfrastructure()
     .AddApplication()
     .ConfigureCors()
     .ConfigureOpenApi();
-
-ApplicationSettings applicationSettings = builder.Configuration.GetSection("ApplicationSettings").Get<ApplicationSettings>() ?? new ApplicationSettings();
-
-// MCP Authentication and Authorization
-AzureAd azureAdSettings = applicationSettings.AzureAd;
-string oAuthServerUrl = $"{azureAdSettings.Instance}{azureAdSettings.TenantId}/v2.0";
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultChallengeScheme = McpAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.Authority = $"{azureAdSettings.Instance}{azureAdSettings.TenantId}/v2.0";
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true, // False for multi audience scenarios
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidAudience = azureAdSettings.Audience,
-        // ValidIssuer = $"{azureAdSettings.Instance}{azureAdSettings.TenantId}/v2.0",
-        ValidIssuers = new[]
-        {
-            $"{azureAdSettings.Instance}{azureAdSettings.TenantId}/v2.0",
-            $"https://sts.windows.net/{azureAdSettings.TenantId}/"
-        },
-        NameClaimType = "name",
-        RoleClaimType = "roles"
-    };
-
-    options.Events = new JwtBearerEvents
-    {
-        OnTokenValidated = context =>
-        {
-            var name = context.Principal?.Identity?.Name ?? "unknown";
-            var email = context.Principal?.FindFirstValue("preferred_username") ?? "unknown";
-            Console.WriteLine($"Token validated for: {name} ({email})");
-            return Task.CompletedTask;
-        },
-        OnAuthenticationFailed = context =>
-        {
-            Console.WriteLine($"Authentication failed: {context.Exception.Message}");
-            return Task.CompletedTask;
-        },
-        OnChallenge = context =>
-        {
-            Console.WriteLine($"Challenging client to authenticate with Entra ID");
-            return Task.CompletedTask;
-        }
-    };
-})
-.AddMcp(options =>
-{
-    options.ResourceMetadata = new()
-    {
-        Resource = new Uri(applicationSettings.McpServerUrl),
-        ResourceDocumentation = new Uri($"{applicationSettings.McpServerUrl}/mcp"),
-        AuthorizationServers = { new Uri(oAuthServerUrl) },
-        ScopesSupported = ["mcp:tools"],
-    };
-});
-
-// "Authorization": "Bearer eyJ0..."
-
+    
 builder.Services.AddAuthorization();
 builder.Services.AddHttpClient(); 
 builder.Services.AddHttpContextAccessor(); 
