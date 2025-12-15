@@ -1,6 +1,9 @@
 {
     "http.systemCertificatesNode": true,
     "debug.internalConsoleOptions": "neverOpen",
+    // "csharp.debug.hotReloadOnSave": true,
+    // "csharp.debug.hotReloadVerbosity": "minimal",
+    // "csharp.experimental.debug.hotReload": false
     // "workbench.colorCustomizations": {
     //     "activityBar.activeBackground": "#74a4cd",
     //     "activityBar.background": "#4f90c6",
