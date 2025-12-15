@@ -12,11 +12,11 @@ public class AuthenticationRepository : IAuthenticationRepository
     private readonly int REFRESH_TOKEN_EXPIRATION_SECONDS = 86400; // 1 day
     private readonly Dictionary<string, string> _users = new();
     private readonly Dictionary<string, string> _refreshTokens = new();
-    private readonly AuthenticationSettings _authSettings;
+    private readonly JwtBearer jwtSettings;
 
     public AuthenticationRepository(AuthenticationSettings authenticationSettings)
     {
-        _authSettings = authenticationSettings;
+        jwtSettings = authenticationSettings.JwtBearer;
     }
 
     public bool Register(string username, string password)
@@ -27,7 +27,6 @@ public class AuthenticationRepository : IAuthenticationRepository
 
     public TokenResponse GenerateToken(string username)
     {
-        var jwtSettings = _authSettings.JwtBearer;
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.IssuerKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -66,21 +65,31 @@ public class AuthenticationRepository : IAuthenticationRepository
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public ClaimsPrincipal ValidateAccessToken(string token)
+    public ClaimsPrincipal? ValidateAccessToken(string token)
     {
-        var jwtSettings = _authSettings.JwtBearer;
-        return new JwtSecurityTokenHandler().ValidateToken(token, new TokenValidationParameters
+        try
         {
-            ValidIssuer = jwtSettings.Issuer,
-            ValidateIssuer = true,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.IssuerKey)),
-            ValidateAudience = true,
-            ValidAudience = jwtSettings.Audience,
-            ValidateLifetime = true,
-            NameClaimType = "name",
-            RoleClaimType = "roles"
-        }, out SecurityToken validatedToken);
+            TokenValidationParameters tokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidateIssuer = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.IssuerKey)),
+                    ValidateAudience = true,
+                    ValidAudience = jwtSettings.Audience,
+                    ValidateLifetime = true,
+                    NameClaimType = "name",
+                    RoleClaimType = "roles"
+                };
+            
+            ClaimsPrincipal principal = new JwtSecurityTokenHandler()
+                .ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
+            return principal;
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private string GenerateRefreshToken()
