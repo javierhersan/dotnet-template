@@ -4,9 +4,11 @@ using System.Text;
 using Application.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using Application.Repositories;
+using Application.DTOs;
 
 public class AuthenticationRepository : IAuthenticationRepository
 {
+    private readonly int ACCESS_TOKEN_EXPIRATION_SECONDS = 3600; 
     private readonly Dictionary<string, string> _users = new();
     private readonly AuthenticationSettings _authSettings;
 
@@ -21,7 +23,7 @@ public class AuthenticationRepository : IAuthenticationRepository
     public bool ValidateUser(string username, string password)
         => _users.TryGetValue(username, out var stored) && stored == password;
 
-    public string GenerateToken(string username)
+    public TokenResponse GenerateToken(string username)
     {
         var jwtSettings = _authSettings.JwtBearer;
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.IssuerKey));
@@ -37,9 +39,14 @@ public class AuthenticationRepository : IAuthenticationRepository
             issuer: jwtSettings.Issuer,
             audience: jwtSettings.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
+            expires: DateTime.UtcNow.AddSeconds(ACCESS_TOKEN_EXPIRATION_SECONDS),
             signingCredentials: creds);
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return new TokenResponse
+        {
+            token_type = "Bearer",
+            access_token = new JwtSecurityTokenHandler().WriteToken(token),
+            expires_in = ACCESS_TOKEN_EXPIRATION_SECONDS,
+        };
     }
 }

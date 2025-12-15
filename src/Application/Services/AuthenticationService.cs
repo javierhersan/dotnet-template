@@ -1,4 +1,5 @@
 using Application.Configuration;
+using Application.DTOs;
 using Application.Repositories;
 
 namespace Application.Services;
@@ -18,6 +19,6 @@ public class AuthenticationService : IAuthenticationService
     public bool ValidateUser(string username, string password)
         => _authenticationRepository.ValidateUser(username, password);
 
-    public string GenerateToken(string username)
+    public TokenResponse GenerateToken(string username)
         => _authenticationRepository.GenerateToken(username);
 }
