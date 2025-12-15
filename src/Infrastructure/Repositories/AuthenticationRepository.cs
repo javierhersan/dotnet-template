@@ -8,8 +8,10 @@ using Application.DTOs;
 
 public class AuthenticationRepository : IAuthenticationRepository
 {
-    private readonly int ACCESS_TOKEN_EXPIRATION_SECONDS = 3600; 
+    private readonly int ACCESS_TOKEN_EXPIRATION_SECONDS = 3600; // 1 hour
+    private readonly int REFRESH_TOKEN_EXPIRATION_SECONDS = 86400; // 1 day
     private readonly Dictionary<string, string> _users = new();
+    private readonly Dictionary<string, string> _refreshTokens = new();
     private readonly AuthenticationSettings _authSettings;
 
     public AuthenticationRepository(AuthenticationSettings authenticationSettings)
@@ -35,18 +37,69 @@ public class AuthenticationRepository : IAuthenticationRepository
             new Claim("sub", username)
         };
 
-        var token = new JwtSecurityToken(
-            issuer: jwtSettings.Issuer,
-            audience: jwtSettings.Audience,
-            claims: claims,
-            expires: DateTime.UtcNow.AddSeconds(ACCESS_TOKEN_EXPIRATION_SECONDS),
-            signingCredentials: creds);
+        string accessToken = GenerateAccessToken(jwtSettings.Issuer, jwtSettings.Audience, claims, creds, ACCESS_TOKEN_EXPIRATION_SECONDS);
+        string refreshToken = GenerateRefreshToken();
+        SaveUserRefreshToken(username, refreshToken);
 
         return new TokenResponse
         {
             token_type = "Bearer",
-            access_token = new JwtSecurityTokenHandler().WriteToken(token),
+            access_token = accessToken,
             expires_in = ACCESS_TOKEN_EXPIRATION_SECONDS,
+            ext_expires_in = ACCESS_TOKEN_EXPIRATION_SECONDS,
+            refresh_token = refreshToken,
+            refresh_token_expires_in = REFRESH_TOKEN_EXPIRATION_SECONDS,
+            id_token = string.Empty,
+            client_info = string.Empty,
         };
+    }
+
+    private string GenerateAccessToken(string issuer, string audience, IEnumerable<Claim> claims, SigningCredentials creds, int expirationSeconds)
+    {
+        var token = new JwtSecurityToken(
+            issuer: issuer,
+            audience: audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddSeconds(expirationSeconds),
+            signingCredentials: creds);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public ClaimsPrincipal ValidateAccessToken(string token)
+    {
+        var jwtSettings = _authSettings.JwtBearer;
+        return new JwtSecurityTokenHandler().ValidateToken(token, new TokenValidationParameters
+        {
+            ValidIssuer = jwtSettings.Issuer,
+            ValidateIssuer = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.IssuerKey)),
+            ValidateAudience = true,
+            ValidAudience = jwtSettings.Audience,
+            ValidateLifetime = true,
+            NameClaimType = "name",
+            RoleClaimType = "roles"
+        }, out SecurityToken validatedToken);
+    }
+
+    private string GenerateRefreshToken()
+    {
+        return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+    }
+
+    private void SaveUserRefreshToken(string username, string refreshToken)
+    {
+        _refreshTokens[username] = refreshToken;
+    }
+
+    public bool ValidateRefreshToken(string username, string refreshToken)
+    {
+        return _refreshTokens.TryGetValue(username, out var storedToken) && storedToken == refreshToken;
+    }
+
+    public void RevokeRefreshToken(string username)
+    {
+        _refreshTokens.Remove(username);
     }
 }
