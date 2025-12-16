@@ -1,5 +1,5 @@
 using Application.Configuration;
-using Application.DTOs;
+using Application.Responses;
 using Application.Repositories;
 
 namespace Application.Services;

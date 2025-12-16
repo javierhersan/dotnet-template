@@ -1,4 +1,5 @@
-namespace Application.DTOs;
+namespace Application.Responses;
+
 public class TokenResponse
 {
     public string token_type { get; set; } = "Bearer";

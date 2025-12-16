@@ -1,4 +1,3 @@
-using Application.DTOs;
 using Application.Responses;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;

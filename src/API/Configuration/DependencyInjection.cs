@@ -181,8 +181,11 @@ public static class DependencyInjection
     
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
+        services.AddSingleton<IJwtAuthRepository, JwtAuthRepository>();
+        services.AddSingleton<IOAuthRepository, OAuthRepository>();
         services.AddSingleton<IAuthenticationRepository, AuthenticationRepository>();
         services.AddSingleton<ITodosRepository, TodosRepository>();
+
         return services;
     }
 
