@@ -5,23 +5,34 @@ using Application.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using Application.Repositories;
 using Application.Responses;
+using Domain.Entities;
 
 public class AuthenticationRepository : IAuthenticationRepository
 {
-    private readonly Dictionary<string, string> _users = new();
+    private readonly IUserRepository _userRepository;
     private readonly IOAuthRepository _oAuthRepository;
+    
 
-    public AuthenticationRepository(IOAuthRepository oAuthRepository)
+    public AuthenticationRepository(IUserRepository userRepository, IOAuthRepository oAuthRepository)
     {
-        // TODO: Replace OAuth with OIDC
+        _userRepository = userRepository;
         _oAuthRepository = oAuthRepository;
     }
 
     public bool Register(string username, string password)
-        => _users.TryAdd(username, password);
+    {
+        User user = new User(username, $"{username}@example.com");
+        user.AddPassword(password);
+        return _userRepository.CreateUser(user);
+    }
 
     public bool ValidateUser(string username, string password)
-        => _users.TryGetValue(username, out var stored) && stored == password;
+    {
+        User? user = _userRepository.GetUserByUsername(username);
+        if (user == null)
+            return false;
+        return user.ValidatePassword(password);
+    }
 
     public TokenResponse GenerateToken(string username)
     {
