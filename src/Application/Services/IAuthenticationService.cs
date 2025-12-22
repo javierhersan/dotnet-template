@@ -1,8 +1,9 @@
 using Application.Responses;
+using Domain.Entities;
 
 public interface IAuthenticationService
 {
-    bool Register(string username, string password);
-    bool ValidateUser(string username, string password);
+    TokenResponse? Login(string username, string password);  
+    TokenResponse? SignUp(string username, string email, string fullName, string password);
     TokenResponse GenerateToken(string username);
 }

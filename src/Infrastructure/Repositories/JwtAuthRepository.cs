@@ -26,22 +26,6 @@ public class JwtAuthRepository : IJwtAuthRepository
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public Dictionary<string, string> GenerateBaseClaims(string username, string clientId = "")
-    {
-        List<Claim> claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, username),
-            new Claim("sub", username)
-        };
-
-        if (!string.IsNullOrEmpty(clientId))
-        {
-            claims.Add(new Claim("client_id", clientId));
-        }
-
-        return claims.ToDictionary(c => c.Type, c => c.Value);
-    }
-
     public Dictionary<string, string> GetJwtClaims(string token)
     {
         try
@@ -73,8 +57,8 @@ public class JwtAuthRepository : IJwtAuthRepository
                     ValidateAudience = true,
                     ValidAudience = jwtSettings.Audience,
                     ValidateLifetime = true,
-                    NameClaimType = "name",
-                    RoleClaimType = "roles"
+                    // NameClaimType = "name",
+                    // RoleClaimType = "roles"
                 };
     }
 }

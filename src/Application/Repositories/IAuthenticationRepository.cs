@@ -1,10 +1,12 @@
 using Application.Responses;
+using Domain.Entities;
 
 namespace Application.Repositories;
 
 public interface IAuthenticationRepository
 {
-    bool Register(string username, string password);
+    User? GetUserByUsername(string username);
+    User? Register(string username, string email, string fullName, string password);
     bool ValidateUser(string username, string password);
-    TokenResponse GenerateToken(string username);
+    TokenResponse GenerateToken(string userId, bool useOidc = true);
 }

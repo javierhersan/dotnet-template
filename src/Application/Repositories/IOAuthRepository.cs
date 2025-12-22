@@ -9,9 +9,10 @@ public interface IOAuthRepository
 {
     OAuthClient RegisterClient(string applicationName, string callbackUrl);
     bool ClientExists(string clientId);
-    AuthorizeResponse AuthorizeClient(AuthorizeRequest request, string username);
+    AuthorizeResponse AuthorizeClient(AuthorizeRequest request, string userId);
     TokenResponse ExchangeToken(TokenRequest request);
-    TokenResponse GenerateExchangeToken(string username, string clientId = "");
-    bool ValidateRefreshToken(string username, string refreshToken);
-    void RevokeRefreshToken(string username);
+    TokenResponse GenerateExchangeToken(string userId, string clientId = "");
+    bool ValidateRefreshToken(string userId, string refreshToken);
+    void RevokeRefreshToken(string userId);
+    public Dictionary<string, string> GenerateOAuthBaseClaims(string userId, string clientId = "");
 }

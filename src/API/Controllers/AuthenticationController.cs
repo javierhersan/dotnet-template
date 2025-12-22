@@ -16,35 +16,39 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("signup")]
-    public IActionResult Signup([FromBody] AuthRequest request)
+    public IActionResult Signup([FromBody] SignupRequest request)
     {
-        if (_authenticationService.Register(request.Username, request.Password))
+        TokenResponse? tokenResponse = _authenticationService.SignUp(request.Username, request.Email, request.FullName, request.Password);
+        if (tokenResponse == null)
         {
-            return Ok(_authenticationService.GenerateToken(request.Username)); 
+            return Conflict(
+                Problem(
+                    detail: "Credentials conflict.",
+                    statusCode: StatusCodes.Status409Conflict,
+                    title: "Conflict"
+                )
+            );
         }
-        return Conflict(
-            Problem(
-                detail: "Username already exists.",
-                statusCode: StatusCodes.Status409Conflict,
-                title: "Conflict"
-            )
-        );
+        
+        return Ok(tokenResponse);
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] AuthRequest request)
+    public IActionResult Login([FromBody] LoginRequest request)
     {
-        if (_authenticationService.ValidateUser(request.Username, request.Password))
+        TokenResponse? tokenResponse = _authenticationService.Login(request.Username, request.Password);
+        if (tokenResponse == null)
         {
-            return Ok(_authenticationService.GenerateToken(request.Username));
+            return Unauthorized(
+                Problem(
+                    detail: "Invalid credentials.",
+                    statusCode: StatusCodes.Status401Unauthorized,
+                    title: "Unauthorized"
+                )
+            );
         }
-        return Unauthorized(
-            Problem(
-                detail: "Invalid credentials.",
-                statusCode: StatusCodes.Status401Unauthorized,
-                title: "Unauthorized"
-            )
-        );
+            
+        return Ok(tokenResponse);
     }
 }
 

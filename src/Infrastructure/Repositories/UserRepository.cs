@@ -11,14 +11,14 @@ namespace Infrastructure.Repositories
             _users = new List<User>();
         }
 
-        public bool CreateUser(User user)
+        public User? CreateUser(User user)
         {
             if (string.IsNullOrEmpty(user.Id) || UserExists(user.Id))
             {
                 user.Id = GenerateUserId();
             }
             _users.Add(user);
-            return true;
+            return user;
         }
 
         public User? GetUserById(string id)
@@ -36,15 +36,15 @@ namespace Infrastructure.Repositories
             return _users.FirstOrDefault(u => u.Email == email);
         }
 
-        public bool RemoveUser(string id)
+        public User? RemoveUser(string id)
         {
-            var user = GetUserById(id);
+            User? user = GetUserById(id);
             if (user != null)
             {
                 _users.Remove(user);
-                return true;
+                return user;
             }
-            return false;
+            return null;
         }
 
         private string GenerateUserId()

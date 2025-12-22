@@ -184,6 +184,7 @@ public static class DependencyInjection
         services.AddSingleton<IJwtAuthRepository, JwtAuthRepository>();
         services.AddSingleton<IUserRepository, UserRepository>();
         services.AddSingleton<IOAuthRepository, OAuthRepository>();
+        services.AddSingleton<IOidcRepository, OidcRepository>();
         services.AddSingleton<IAuthenticationRepository, AuthenticationRepository>();
         services.AddSingleton<ITodosRepository, TodosRepository>();
 

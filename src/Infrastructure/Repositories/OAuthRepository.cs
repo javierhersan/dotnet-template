@@ -72,7 +72,7 @@ public class OAuthRepository : IOAuthRepository
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public AuthorizeResponse AuthorizeClient(AuthorizeRequest request, string username)
+    public AuthorizeResponse AuthorizeClient(AuthorizeRequest request, string userId)
     {
         if (!ClientExists(request.ClientId))
         {
@@ -84,7 +84,7 @@ public class OAuthRepository : IOAuthRepository
             Code = _jwtAuthRepository.GenerateJwtToken(
                 _jwtSettings.Issuer, 
                 _jwtSettings.Audience, 
-                _jwtAuthRepository.GenerateBaseClaims(username, request.ClientId), 
+                GenerateOAuthBaseClaims(userId, request.ClientId), 
                 AUTHORIZE_TOKEN_EXPIRATION_SECONDS
             ),
             State = request.State
@@ -104,35 +104,34 @@ public class OAuthRepository : IOAuthRepository
             throw new Exception("Invalid Client ID");
         }
         
-        string? username = _jwtAuthRepository.GetJwtClaims(request.Code).Where(c => c.Key == "sub").Select(c => c.Value).FirstOrDefault();
+        string? userId = _jwtAuthRepository.GetJwtClaims(request.Code).Where(c => c.Key == "sub").Select(c => c.Value).FirstOrDefault();
 
-        if (username == null)
+        if (userId == null)
         {
             throw new Exception("Invalid Authorization Code");
         }
 
-        return GenerateExchangeToken(username, request.ClientId);
+        return GenerateExchangeToken(userId, request.ClientId);
         
     }
 
-    public TokenResponse GenerateExchangeToken(string username, string clientId = "")
+    public TokenResponse GenerateExchangeToken(string userId, string clientId = "")
     {
         string accessToken = _jwtAuthRepository.GenerateJwtToken(
                 _jwtSettings.Issuer, 
                 _jwtSettings.Audience, 
-                _jwtAuthRepository.GenerateBaseClaims(username, clientId), 
+                GenerateOAuthBaseClaims(userId, clientId), 
                 ACCESS_TOKEN_EXPIRATION_SECONDS
             );
         
         string refreshToken = _jwtAuthRepository.GenerateJwtToken(
                 _jwtSettings.Issuer, 
                 _jwtSettings.Audience, 
-                _jwtAuthRepository.GenerateBaseClaims(username, clientId), 
+                GenerateOAuthBaseClaims(userId, clientId), 
                 REFRESH_TOKEN_EXPIRATION_SECONDS
             );
 
-        SaveUserRefreshToken(username, refreshToken);
-
+        SaveUserRefreshToken(userId, refreshToken);
         return new TokenResponse
         {
             token_type = "Bearer",
@@ -146,18 +145,29 @@ public class OAuthRepository : IOAuthRepository
         };
     }
 
-    private void SaveUserRefreshToken(string username, string refreshToken)
+    private void SaveUserRefreshToken(string userId, string refreshToken)
     {
-        _refreshTokens[username] = refreshToken;
+        _refreshTokens[userId] = refreshToken;
     }
 
-    public bool ValidateRefreshToken(string username, string refreshToken)
+    public bool ValidateRefreshToken(string userId, string refreshToken)
     {
-        return _refreshTokens.TryGetValue(username, out var storedToken) && storedToken == refreshToken;
+        return _refreshTokens.TryGetValue(userId, out var storedToken) && storedToken == refreshToken;
     }
 
-    public void RevokeRefreshToken(string username)
+    public void RevokeRefreshToken(string userId)
     {
-        _refreshTokens.Remove(username);
+        _refreshTokens.Remove(userId);
+    }
+
+    public Dictionary<string, string> GenerateOAuthBaseClaims(string userId, string clientId = "")
+    {
+        var claims = new Dictionary<string, string>
+        {
+            { "sub", userId },
+            { "client_id", clientId }
+        };
+
+        return claims;
     }
 }

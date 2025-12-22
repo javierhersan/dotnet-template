@@ -1,6 +1,7 @@
 using Application.Configuration;
 using Application.Responses;
 using Application.Repositories;
+using Domain.Entities;
 
 namespace Application.Services;
 
@@ -13,12 +14,26 @@ public class AuthenticationService : IAuthenticationService
         _authenticationRepository = authenticationRepository;
     }
 
-    public bool Register(string username, string password)
-        => _authenticationRepository.Register(username, password);
+    public TokenResponse? Login(string username, string password)
+    {
+        if (_authenticationRepository.ValidateUser(username, password))
+        {
+            User? user = _authenticationRepository.GetUserByUsername(username);
+            return _authenticationRepository.GenerateToken(user?.Id!);
+        }
+        return null;
+    }
 
-    public bool ValidateUser(string username, string password)
-        => _authenticationRepository.ValidateUser(username, password);
+    public TokenResponse? SignUp(string username, string email, string fullName, string password)
+    {
+        User? user = _authenticationRepository.Register(username, email, fullName, password);
+        if (user != null)
+        {
+            return _authenticationRepository.GenerateToken(user.Id!);
+        }
+        return null;
+    }
 
-    public TokenResponse GenerateToken(string username)
+    public TokenResponse GenerateToken(string username) 
         => _authenticationRepository.GenerateToken(username);
 }

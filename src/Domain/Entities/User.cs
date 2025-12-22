@@ -6,14 +6,16 @@ namespace Domain.Entities
     public class User
     {
         public string? Id { get; set; }
+        public string FullName { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
         public string? HashedPassword { get; set; } 
 
-        public User(string username, string email)
+        public User(string username, string email, string fullName)
         {
             Username = username;
             Email = email;
+            FullName = fullName;
         }
 
         public void AddPassword(string password)
