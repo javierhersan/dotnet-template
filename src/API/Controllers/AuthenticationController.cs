@@ -52,5 +52,23 @@ public class AuthenticationController : ControllerBase
     }
 }
 
+// Improvement suggestion: instead of returning null for failure cases, consider using a Result<T> type
+// public class Result<T>
+// {
+//     public bool Success { get; set; }
+//     public T? Data { get; set; }
+//     public string? Error { get; set; }
+// }
 
+// In the service:
+// public Result<TokenResponse> Login(string username, string password)
+// {
+//     if (invalid) return new Result<TokenResponse> { Success = false, Error = "Invalid credentials" };
+//     return new Result<TokenResponse> { Success = true, Data = tokenResponse };
+// }
 
+// In the controller:
+// var result = _authenticationService.Login(request.Username, request.Password);
+// if (!result.Success)
+//     return Unauthorized(result.Error);
+// return Ok(result.Data);
