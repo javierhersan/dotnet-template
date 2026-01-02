@@ -52,7 +52,6 @@ public class OidcRepository : IOidcRepository
     public string GenerateIdToken(string userId)
     {
         return _jwtAuthRepository.GenerateJwtToken(
-                _jwtSettings.Issuer, 
                 _jwtSettings.Audience, 
                 claims: GenerateOpenIdBaseClaims(userId), 
                 OIDC_TOKEN_EXPIRATION_SECONDS

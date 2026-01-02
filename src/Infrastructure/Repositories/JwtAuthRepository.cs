@@ -14,10 +14,10 @@ public class JwtAuthRepository : IJwtAuthRepository
         jwtSettings = authenticationSettings.JwtBearer;
     }
 
-    public string GenerateJwtToken(string issuer, string audience, Dictionary<string, string> claims, int expirationSeconds)
+    public string GenerateJwtToken(string audience, Dictionary<string, string> claims, int expirationSeconds)
     {
         var token = new JwtSecurityToken(
-            issuer: issuer,
+            issuer: jwtSettings.Issuer,
             audience: audience,
             claims: claims.Select(c => new Claim(c.Key, c.Value)),
             expires: DateTime.UtcNow.AddSeconds(expirationSeconds),

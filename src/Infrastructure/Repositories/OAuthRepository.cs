@@ -82,7 +82,6 @@ public class OAuthRepository : IOAuthRepository
         return new AuthorizeResponse
         {
             Code = _jwtAuthRepository.GenerateJwtToken(
-                _jwtSettings.Issuer, 
                 _jwtSettings.Audience, 
                 GenerateOAuthBaseClaims(userId, request.ClientId), 
                 AUTHORIZE_TOKEN_EXPIRATION_SECONDS
@@ -118,14 +117,12 @@ public class OAuthRepository : IOAuthRepository
     public TokenResponse GenerateExchangeToken(string userId, string clientId = "")
     {
         string accessToken = _jwtAuthRepository.GenerateJwtToken(
-                _jwtSettings.Issuer, 
                 _jwtSettings.Audience, 
                 GenerateOAuthBaseClaims(userId, clientId), 
                 ACCESS_TOKEN_EXPIRATION_SECONDS
             );
         
         string refreshToken = _jwtAuthRepository.GenerateJwtToken(
-                _jwtSettings.Issuer, 
                 _jwtSettings.Audience, 
                 GenerateOAuthBaseClaims(userId, clientId), 
                 REFRESH_TOKEN_EXPIRATION_SECONDS
