@@ -22,15 +22,15 @@ var configuration = new ConfigurationBuilder()
     .AddCommandLine(args)
     .Build();
 
-builder.Configuration.AddConfiguration(configuration);
-builder.Services.ConfigureSettings(builder.Configuration);
-builder.Services.ConfigureAuthentication(builder.Configuration);
-
 builder.Services.AddInfrastructure()
     .AddApplication()
     .ConfigureCors()
     .ConfigureOpenApi()
     .AddControllers();
+
+builder.Configuration.AddConfiguration(configuration);
+builder.Services.ConfigureSettings(builder.Configuration);
+builder.Services.ConfigureAuthentication(builder.Configuration);
 
 var app = builder.Build();
 

@@ -12,6 +12,8 @@ using API.Controllers;
 using Microsoft.Extensions.Options;
 using System.Text.Encodings.Web;
 using AuthenticationService = Application.Services.AuthenticationService;
+using Domain.Entities;
+using System.Security.Cryptography;
 
 namespace API.Configuration;
 
@@ -112,11 +114,75 @@ public static class DependencyInjection
         });
     }
 
-    public static AuthenticationBuilder ConfigureJwtBearerAuthentication(this IServiceCollection services, IConfiguration configuration, AuthenticationOptions? authOptions)
+    public static TokenValidationParameters GetJwtValidationParameters( JwtBearer jwtBearerSettings)
+    {
+        List<SecurityKey> rsaPublicKeys = new List<SecurityKey> { };
+        return new TokenValidationParameters
+            {
+                ValidIssuer = jwtBearerSettings.Issuer,
+                ValidateIssuer = true,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKeys = rsaPublicKeys,
+                ValidateAudience = true, // for multi-audience scenarios: false
+                ValidAudience = jwtBearerSettings.Audience,
+                ValidateLifetime = true,
+                NameClaimType = "name",
+                RoleClaimType = "roles"
+            };
+    }
+
+    /// <summary>
+    /// Retrieves issuer public keys from the JwtAuthRepository to validate incoming JWTs.
+    /// Works for self-issued JWTs.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static List<SecurityKey> GetIssuerJwks(MessageReceivedContext context)
+    {
+        var jwtAuthRepository = context.HttpContext.RequestServices.GetRequiredService<IJwtAuthRepository>();
+        var keys = jwtAuthRepository.GetIssuerPublicKeys().Select(jwkJson =>
+        {
+            Jwk? jwk = System.Text.Json.JsonSerializer.Deserialize<Jwk>(jwkJson);
+            var rsa = RSA.Create();
+            rsa.ImportParameters(new RSAParameters
+            {
+                Modulus = jwtAuthRepository.Base64UrlDecode(jwk!.n),
+                Exponent = jwtAuthRepository.Base64UrlDecode(jwk!.e)
+            });
+
+            return (SecurityKey)new RsaSecurityKey(rsa) { KeyId = jwk.kid };
+        }).ToList();
+
+        return keys;
+    }
+
+    /// <summary>
+    /// Get jwks from ./well-known/jwks.json endpoint if using external issuer
+    /// TODO: get jwks and implement caching
+    /// </summary>
+    /// <returns></returns>
+    public static List<SecurityKey> GetIssuerJwks()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Generates JWKs from configured private key in appsettings.json.
+    /// </summary>
+    /// <param name="jwtBearerSettings"></param>
+    /// <returns></returns>
+    public static List<SecurityKey> GenerateJwksFromPrivateKey(JwtBearer jwtBearerSettings)
+    {
+        return new List<SecurityKey> { 
+                new SymmetricSecurityKey(
+                    System.Text.Encoding.UTF8.GetBytes(jwtBearerSettings.IssuerKey)
+                ) 
+            };
+    }
+
+    public static AuthenticationBuilder ConfigureJwtBearerAuthentication(this IServiceCollection services, IConfiguration configuration, AuthenticationOptions? authOptions, bool useIssuerPublicKeys = true)
     {
         AuthenticationSettings authenticationSettings = configuration.GetSection("AuthenticationSettings").Get<AuthenticationSettings>() ?? new AuthenticationSettings();
-
-        // MCP Authentication and Authorization
         JwtBearer jwtBearerSettings = authenticationSettings.JwtBearer;
         return services.AddAuthentication(options =>
         {
@@ -125,21 +191,24 @@ public static class DependencyInjection
         })
         .AddJwtBearer(options =>
         {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidIssuer = jwtBearerSettings.Issuer,
-                ValidateIssuer = true,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtBearerSettings.IssuerKey)),
-                ValidateAudience = true, // for multi-audience scenarios: false
-                ValidAudience = jwtBearerSettings.Audience,
-                ValidateLifetime = true,
-                NameClaimType = "name",
-                RoleClaimType = "roles"
-            };
+            options.TokenValidationParameters = GetJwtValidationParameters(jwtBearerSettings);
 
             options.Events = new JwtBearerEvents
             {
+                OnMessageReceived = context =>
+                {
+                    if (useIssuerPublicKeys)
+                    {
+                        context.Options.TokenValidationParameters.IssuerSigningKeys = GetIssuerJwks(context);
+                    }
+                    else 
+                    {
+                        context.Options.TokenValidationParameters.IssuerSigningKeys = GenerateJwksFromPrivateKey(jwtBearerSettings);
+                    }
+
+                    return Task.CompletedTask;
+                },
+
                 OnTokenValidated = context =>
                 {
                     var name = context.Principal?.Identity?.Name ?? "unknown";
@@ -160,6 +229,7 @@ public static class DependencyInjection
             };
         });
     }
+    
     
     public static AuthenticationBuilder ConfigureAzureAdAuthentication(this IServiceCollection services, IConfiguration configuration, AuthenticationOptions? authOptions)
     {
@@ -193,6 +263,7 @@ public static class DependencyInjection
 
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
+        services.AddSingleton<IJwtService, JwtService>();
         services.AddSingleton<IAuthenticationService, AuthenticationService>();
         services.AddSingleton<ITodosService, TodosService>();
         return services;
