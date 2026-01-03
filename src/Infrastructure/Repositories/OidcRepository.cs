@@ -77,24 +77,3 @@ public class OidcRepository : IOidcRepository
         return claims;
     }
 }
-
-// GET /common/v2.0/.well-known/openid-configuration RETURNS:
-// {
-//   "authorization_endpoint": "https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize",
-//   "token_endpoint": "https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token",
-//   "token_endpoint_auth_methods_supported": [
-//     "client_secret_post",
-//     "private_key_jwt"
-//   ],
-//   "jwks_uri": "https://login.microsoftonline.com/{tenant}/discovery/v2.0/keys",
-//   "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
-//   "subject_types_supported": [
-//       "pairwise"
-//   ],
-//   ...
-// }
-
-// References:
-// https://learn.microsoft.com/en-us/entra/identity-platform/authentication-flows-app-scenarios
-// https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc
-// https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols
