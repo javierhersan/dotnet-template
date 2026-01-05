@@ -145,3 +145,29 @@ To connect your GitHub Copilot Agent to your MCP tools, please specify the MCP s
 	"inputs": [],
 }
 ```
+
+## Container Instructions
+
+To run the dotnet API within a Docker Container:
+
+1. Build the container image
+
+```console
+cd src
+```
+
+```console
+docker build -t api .
+```
+
+2. Run the container image
+
+```console
+docker run -p 8443:443 -p 8080:80 api
+```
+
+3. Access the image using a web browser https://localhost:8443/scalar/v1 or execute a curl command
+
+```console
+curl.exe -k https://localhost:8443/scalar/v1 --verbose
+```
