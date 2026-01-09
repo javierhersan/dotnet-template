@@ -20,15 +20,15 @@ public class TodosMcpController
     private ClaimsPrincipal User => _httpContextAccessor.HttpContext?.User ?? new ClaimsPrincipal();
 
     [McpServerTool(Name = "GetTodos"), Description("Returns the list of todos.")]
-    public Todo[] GetTodos()
+    public Todo[]? GetTodos()
     {
-        return _todosService.GetTodos();
+        return _todosService.GetTodos().Data;
     }
 
     [McpServerTool(Name = "GetTodoById"), Description("Returns a todo by its ID.")]
     public Todo? GetTodoById(int id)
     {
-        Todo? todo = _todosService.GetTodoById(id);
+        Todo? todo = _todosService.GetTodoById(id).Data;
         return todo;
     }
 
@@ -51,7 +51,7 @@ public class TodosMcpController
         //     throw new UnauthorizedAccessException("User email claim not found.");
         // }
 
-        Todo? todo = _todosService.GetTodoById(id);
+        Todo? todo = _todosService.GetTodoById(id).Data;
         return todo;
     }
 }

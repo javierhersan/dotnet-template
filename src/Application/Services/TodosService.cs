@@ -12,7 +12,21 @@ public class TodosService : ITodosService
         _todosRepository = todosRepository;
     }
 
-    public Todo[] GetTodos() => _todosRepository.GetTodos();
+    public Result<Todo[]> GetTodos()  
+    {
+        return new Result<Todo[]>()
+        {
+            Success = true,
+            Data = _todosRepository.GetTodos()
+        };
+    }
+        
 
-    public Todo? GetTodoById(int id) => _todosRepository.GetTodoById(id);
+    public Result<Todo?> GetTodoById(int id){
+        return new Result<Todo?>()
+        {
+            Success = true,
+            Data = _todosRepository.GetTodoById(id)
+        };
+    } 
 }

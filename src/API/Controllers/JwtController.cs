@@ -19,8 +19,7 @@ public class JwtController : ControllerBase
     [HttpGet("jwks.json")]
     public IActionResult GetJwks()
     {
-        var jwks = _jwtService.GetIssuerJwks();
-        return Ok(new { keys = jwks });
+        return Ok(new { keys = _jwtService.GetIssuerJwks().Data });
     }
     
 }

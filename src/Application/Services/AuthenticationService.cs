@@ -14,26 +14,59 @@ public class AuthenticationService : IAuthenticationService
         _authenticationRepository = authenticationRepository;
     }
 
-    public TokenResponse? Login(string username, string password)
+    public Result<TokenResponse> Login(string username, string password)
     {
         if (_authenticationRepository.ValidateUser(username, password))
         {
             User? user = _authenticationRepository.GetUserByUsername(username);
-            return _authenticationRepository.GenerateToken(user?.Id!);
+            return new Result<TokenResponse>()
+            {
+                Success = true,
+                Data = _authenticationRepository.GenerateToken(user?.Id!)
+            };
         }
-        return null;
+
+        return new Result<TokenResponse>()
+        {
+            Success = false,
+            Error = new Error
+            {
+                Code = ErrorCode.Unauthorized,
+                Message = "The provided username or password is incorrect."
+            }
+        };
     }
 
-    public TokenResponse? SignUp(string username, string email, string fullName, string password)
+    public Result<TokenResponse> SignUp(string username, string email, string fullName, string password)
     {
         User? user = _authenticationRepository.Register(username, email, fullName, password);
         if (user != null)
         {
-            return _authenticationRepository.GenerateToken(user.Id!);
+            return new Result<TokenResponse>()
+            {
+                Success = true,
+                Data = _authenticationRepository.GenerateToken(user.Id!)
+            };
         }
-        return null;
+
+        return new Result<TokenResponse>()
+        {
+            Success = false,
+            Error = new Error
+            {
+                Code = ErrorCode.Conflict,
+                Message = "The provided credentials conflict with an existing user."
+            }
+        };
     }
 
-    public TokenResponse GenerateToken(string username) 
-        => _authenticationRepository.GenerateToken(username);
+    public Result<TokenResponse> GenerateToken(string username)
+    {
+        return new Result<TokenResponse>()
+        {
+            Success = true,
+            Data = _authenticationRepository.GenerateToken(username)
+        };
+    }
+        
 }

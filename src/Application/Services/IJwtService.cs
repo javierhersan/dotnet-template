@@ -7,8 +7,8 @@ namespace Application.Services;
 
 public interface IJwtService
 {
-    string GenerateJwtToken(string audience, Dictionary<string, string> claims, int expirationSeconds);
-    Dictionary<string, string> GetJwtClaims(string token);
-    IEnumerable<object> GetIssuerJwks();
-    IEnumerable<string> GetIssuerPublicKeys();
+    Result<string> GenerateJwtToken(string audience, Dictionary<string, string> claims, int expirationSeconds);
+    Result<Dictionary<string, string>> GetJwtClaims(string token);
+    Result<IEnumerable<object>> GetIssuerJwks();
+    Result<IEnumerable<string>> GetIssuerPublicKeys();
 }

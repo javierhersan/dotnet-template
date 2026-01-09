@@ -18,7 +18,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("signup")]
     public IActionResult Signup([FromBody] SignupRequest request)
     {
-        TokenResponse? tokenResponse = _authenticationService.SignUp(request.Username, request.Email, request.FullName, request.Password);
+        TokenResponse? tokenResponse = _authenticationService.SignUp(request.Username, request.Email, request.FullName, request.Password).Data;
         if (tokenResponse == null)
         {
             return Conflict(
@@ -36,7 +36,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginRequest request)
     {
-        TokenResponse? tokenResponse = _authenticationService.Login(request.Username, request.Password);
+        TokenResponse? tokenResponse = _authenticationService.Login(request.Username, request.Password).Data;
         if (tokenResponse == null)
         {
             return Unauthorized(

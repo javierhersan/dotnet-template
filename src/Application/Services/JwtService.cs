@@ -16,23 +16,39 @@ public class JwtService : IJwtService
         _jwtAuthRepository = jwtAuthRepository;
     }
 
-    public string GenerateJwtToken(string audience, Dictionary<string, string> claims, int expirationSeconds)
+    public Result<string> GenerateJwtToken(string audience, Dictionary<string, string> claims, int expirationSeconds)
     {
-        return _jwtAuthRepository.GenerateJwtToken(audience, claims, expirationSeconds);
+        return new Result<string>()
+        {
+            Success = true,
+            Data = _jwtAuthRepository.GenerateJwtToken(audience, claims, expirationSeconds)
+        };
     }
 
-    public Dictionary<string, string> GetJwtClaims(string token)
+    public Result<Dictionary<string, string>> GetJwtClaims(string token)
     {
-        return _jwtAuthRepository.GetJwtClaims(token);
+        return new Result<Dictionary<string, string>>()
+        {
+            Success = true,
+            Data = _jwtAuthRepository.GetJwtClaims(token)
+        };
     }
 
-    public IEnumerable<object> GetIssuerJwks()
+    public Result<IEnumerable<object>> GetIssuerJwks()
     {
-        return _jwtAuthRepository.GetIssuerJwks();
+        return new Result<IEnumerable<object>>()
+        {
+            Success = true,
+            Data = _jwtAuthRepository.GetIssuerJwks()
+        };
     }
-    
-    public IEnumerable<string> GetIssuerPublicKeys()
+
+    public Result<IEnumerable<string>> GetIssuerPublicKeys()
     {
-        return _jwtAuthRepository.GetIssuerPublicKeys();
+        return new Result<IEnumerable<string>>()
+        {
+            Success = true,
+            Data = _jwtAuthRepository.GetIssuerPublicKeys()
+        };
     }
 }

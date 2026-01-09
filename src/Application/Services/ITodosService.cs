@@ -4,6 +4,6 @@ namespace Application.Services;
 
 public interface ITodosService
 {
-    Todo[] GetTodos();
-    Todo? GetTodoById(int id);
+    Result<Todo[]> GetTodos();
+    Result<Todo?> GetTodoById(int id);
 }

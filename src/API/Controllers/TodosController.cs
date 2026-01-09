@@ -21,13 +21,13 @@ namespace API.Controllers
         [HttpGet]
         public ActionResult<Todo[]> GetTodos()
         {
-            return Ok(_todosService.GetTodos());
+            return Ok(_todosService.GetTodos().Data);
         }
 
         [HttpGet("{id}")]
         public ActionResult<Todo> GetTodoById(int id)
         {
-            var todo = _todosService.GetTodoById(id);
+            var todo = _todosService.GetTodoById(id).Data;
             return todo is not null ? Ok(todo) : NotFound();
         }
 
@@ -41,7 +41,7 @@ namespace API.Controllers
         {
             string? userEmail = User.FindFirst(ClaimTypes.Name)?.Value;
 
-            var todo = _todosService.GetTodoById(id);
+            var todo = _todosService.GetTodoById(id).Data;
             return todo is not null ? Ok(todo) : NotFound();
         }
     }
